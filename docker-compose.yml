@@ -79,6 +79,8 @@ services:
       SUPPORT_EMAIL : regional.notificacion@outlook.com
       URL_SWAGGER_PRODUCTION : http://tumlab.local:4002/api/v1
       WEB_SUPPORT :
+      HAS_SYNCHRONIZATION: true
+      IS_TUMLAB: true
     ports:
       - 4002:3000
     networks:
