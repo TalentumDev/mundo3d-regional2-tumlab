@@ -1,0 +1,149 @@
+version: "3.8"
+
+services:
+  keycloak:
+    image: docker.io/bitnami/keycloak:20
+    container_name: keycloak_regional2
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "tumlab.local:192.168.4.1"
+    environment:
+      KEYCLOAK_CREATE_ADMIN_USER: true
+      KEYCLOAK_ADMIN_USER: admin
+      KEYCLOAK_ADMIN_PASSWORD: password
+      KEYCLOAK_MANAGEMENT_USER: manager
+      KEYCLOAK_MANAGEMENT_PASSWORD: password
+      #KEYCLOAK_DATABASE_VENDOR: POSTGRES
+      KEYCLOAK_DATABASE_HOST: host.docker.internal
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: keycloak2
+      KEYCLOAK_DATABASE_USER: postgres
+      KEYCLOAK_DATABASE_PASSWORD: Tumlab2022*
+      KEYCLOAK_DATABASE_SCHEMA: public
+      KEYCLOAK_HTTP_PORT: 8080
+      KEYCLOAK_HTTPS_PORT: 8443
+      KEYCLOAK_BIND_ADDRESS: 0.0.0.0
+      KEYCLOAK_ENABLE_STATISTICS: true
+      KEYCLOAK_PRODUCTION: false
+      KC_HTTP_RELATIVE_PATH: "/auth"
+      #KEYCLOAK_EXTRA_ARGS: "--import-realm"
+      KEYCLOAK_LOG_LEVEL: INFO
+      # THEME_NAME: aulasregional
+    ports:
+      - 7089:8080
+      # - 8443:8443
+    networks:
+      - regional-net
+
+  regional-fase2-si-backend:
+    image: bilinguismotalentum/regional-fase2-si-backend:1.1.9-qa
+    container_name: regional-fase2-si-backend
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "tumlab.local:192.168.4.1"
+    environment:
+      EMAIL_SMTP_PASSWORD : test
+      EMAIL_SMTP_PORT : 587
+      EMAIL_SMTP_SECURE : false
+      EMAIL_SMTP_USER : test
+      FRONTEND_URL : http://tumlab.local:3002
+      JWT_EXPIRATION_IN_MINUTES : 4320
+      JWT_SECRET : MyUltraSecurePassWordIWontForgetToChange
+      KEYCLOAK_AUTH_SERVER_URL : http://tumlab.local:7089/auth
+      KEYCLOAK_CLIENT_ID : regional-client
+      KEYCLOAK_DB_ADDR : host.docker.internal
+      KEYCLOAK_DB_DATABASE : keycloak2
+      KEYCLOAK_DB_PASSWORD : "Tumlab2022*"
+      KEYCLOAK_DB_PORT : 5432
+      KEYCLOAK_DB_USER : postgres
+      KEYCLOAK_ID : regional-client
+      KEYCLOAK_PASSWORD : 8WrnMIr9iO
+      KEYCLOAK_REALM : regional-realm
+      KEYCLOAK_SECRET : B8yPzlT4txHjz1YKCgAVQNV7E0CrZoFd
+      KEYCLOAK_USER : admin
+      MINIO_ACCESSKEY : admin
+      MINIO_HOST : localhost
+      MINIO_NAME : regional
+      MINIO_PORT : 443
+      MINIO_SECRETKEY : admin
+      MINIO_SSL : true
+      MYSQL_DATABASE : siregional
+      MYSQL_HOST : host.docker.internal
+      MYSQL_PASSWORD : "Tumlab2022*"
+      MYSQL_PORT : 3306
+      MYSQL_ROOT_PASSWORD : "Tumlab2022*"
+      MYSQL_USER : root
+      NODE_ENV : production
+      SUPPORT_EMAIL : regional.notificacion@outlook.com
+      URL_SWAGGER_PRODUCTION : http://tumlab.local:4002/api/v1
+      WEB_SUPPORT :
+    ports:
+      - 4002:3000
+    networks:
+      - regional-net
+  regional-fase2-si-backend-bulk:
+    image: bilinguismotalentum/regional-fase2-si-backend-bulk:1.0.0
+    container_name: regional-fase2-si-backend-bulk
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "tumlab.local:192.168.4.1"
+    environment:
+      API_KEY : "h0@c^w53_dg@(@xfb**-k6-xti@e-11i)flp)fx*m9+opos"
+      DB_DATABASE : siregional
+      DB_HOST : host.docker.internal
+      DB_PASSWORD : "Tumlab2022*"
+      DB_PORT : 3306
+      DB_ROOT_PASSWORD : "Tumlab2022*"
+      DB_USER : root
+      KEYCLOAK_AUTH_SERVER_URL : http://tumlab.local:7089/auth
+      KEYCLOAK_CLIENT_ID : regional-client
+      KEYCLOAK_DB_ADDR : host.docker.internal
+      KEYCLOAK_DB_DATABASE : keycloak2
+      KEYCLOAK_DB_PASSWORD : Tumlab2022*
+      KEYCLOAK_DB_PORT : 5432
+      KEYCLOAK_DB_USER : postgres
+      KEYCLOAK_ID : regional-client
+      KEYCLOAK_PASSWORD : 8WrnMIr9iO
+      KEYCLOAK_REALM : regional-realm
+      KEYCLOAK_SECRET : B8yPzlT4txHjz1YKCgAVQNV7E0CrZoFd
+      KEYCLOAK_USER : admin
+      NODE_ENV : prod
+      PORT : 3001
+      URL_SWAGGER_PRODUCTION : http://tumlab.local:4003/api/v1
+    ports:
+      - 4003:3001
+    networks:
+      - regional-net
+
+  regional-fase2-si-frontend:
+    image: bilinguismotalentum/regional-fase2-si-frontend:1.4.2-qa
+    container_name: regional-fase2-si-frontend
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "tumlab.local:192.168.4.1"
+    environment:
+      NEXT_PUBLIC_API_URL : http://tumlab.local:4002/api/v1
+      NEXT_PUBLIC_GAME_URL : http://tumlab.local:3005
+      NEXT_PUBLIC_PASSWORD_IMAGE : "Ww0KICB7DQogICAgImltYWdlIjogInRyaWFuZ2xlIiwNCiAgICAicGF0aCI6ICIvaW1hZ2VzL2ljb25zL2ZpZ3VyZV90cmlhbmdsZS5zdmciLA0KICAgICJjb2RlIjogImU0ZGFhZDI5LWRlNjYtNDU5My1iNDljLTE2ODA1NTk4NzgzOSINCiAgfSwNCiAgew0KICAgICJpbWFnZSI6ICJyaG9tYnVzIiwNCiAgICAicGF0aCI6ICIvaW1hZ2VzL2ljb25zL2ZpZ3VyZV9kaWFtb25kLnN2ZyIsDQogICAgImNvZGUiOiAiZDZhZTQ4NTQtNjlmOS00MTE3LTk1YTAtYjIwOTAxNmY0MDllIg0KICB9LA0KICB7DQogICAgImltYWdlIjogInNxdWFyZSIsDQogICAgInBhdGgiOiAiL2ltYWdlcy9pY29ucy9maWd1cmVfc3F1YXJlLnN2ZyIsDQogICAgImNvZGUiOiAiYTY4NDkwYmItNzE4ZS00MDZkLWE1MTQtMGFlNWViMDI5MGZlIg0KICB9LA0KICB7DQogICAgImltYWdlIjogInJob21ib2lkIiwNCiAgICAicGF0aCI6ICIvaW1hZ2VzL2ljb25zL2ZpZ3VyZV9xdWFkcmlsYXRlcmFsLnN2ZyIsDQogICAgImNvZGUiOiAiY2ZkYjdhYzktMTgyMC00MDgzLWEwOGYtZjNkYTEwMGFiODUxIg0KICB9LA0KICB7DQogICAgImltYWdlIjogImludmVydGVkX3RyaWFuZ2xlIiwNCiAgICAicGF0aCI6ICIvaW1hZ2VzL2ljb25zL2ZpZ3VyZV9pbnZlcnRlZF90cmlhbmdsZS5zdmciLA0KICAgICJjb2RlIjogIjJmOGU5YWZlLTg0YjEtNGMyMy1hYjEyLTFjODhjNWQzNmQ0OCINCiAgfSwNCiAgew0KICAgICJpbWFnZSI6ICJjaXJjbGUiLA0KICAgICJwYXRoIjogIi9pbWFnZXMvaWNvbnMvZmlndXJlX2NpcmNsZS5zdmciLA0KICAgICJjb2RlIjogImE0NDhkZGZjLWU5MmMtNDkxZS05OTJiLTkxNmVkNmJiN2Q5YiINCiAgfQ0KXQ=="
+    ports:
+      - 3003:3000
+    networks:
+      - regional-net
+  regional-fase2-si-game:
+    image: bilinguismotalentum/regional-game:0.4.3
+    container_name: regional-fase2-si-game
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "tumlab.local:192.168.4.1"
+    ports:
+      - 3005:80
+    networks:
+      - regional-net
+networks:
+  regional-net:
+    driver: bridge
