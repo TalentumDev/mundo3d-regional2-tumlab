@@ -83,6 +83,8 @@ services:
       IS_TUMLAB: true
     ports:
       - 4002:3000
+    volumes:
+      - /tumlab/syncthing/tumlab.config:/app/public/tumlab.config
     networks:
       - regional-net
   regional-fase2-si-backend-bulk:
