@@ -82,7 +82,7 @@ services:
       HAS_SYNCHRONIZATION: true
       IS_TUMLAB: true
     ports:
-      - 4002:3000
+      - 4002:4000
     volumes:
       - /tumlab/syncthing/tumlab.config:/app/public/tumlab.config
     networks:
