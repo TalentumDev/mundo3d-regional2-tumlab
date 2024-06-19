@@ -37,7 +37,7 @@ services:
       - regional-net
 
   regional-fase2-si-backend:
-    image: bilinguismotalentum/regional-fase2-si-backend:1.1.9-qa
+    image: bilinguismotalentum/regional-fase2-si-backend:1.1.10-qa
     container_name: regional-fase2-si-backend
     restart: always
     extra_hosts:
